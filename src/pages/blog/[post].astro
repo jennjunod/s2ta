@@ -1,19 +1,20 @@
 ---
-import DefaultLayout from '../../layouts/DefaultLayout.astro'
-import { Breadcrumbs, BreadcrumbsItem } from 'accessible-astro-components'
+import DefaultLayout from '../../layouts/DefaultLayout.astro';
+import { Breadcrumbs, BreadcrumbsItem } from 'accessible-astro-components';
+import { fetchPosts } from '../../utils/fetchPosts.js';
 
 export async function getStaticPaths() {
-  const data = await fetch('https://jsonplaceholder.typicode.com/posts').then((response) => response.json())
+  const posts = await fetchPosts();
 
-  return data.map((post) => {
+  return posts.map((post) => {
     return {
       params: { post: post.title.replaceAll(' ', '-').toLowerCase() },
       props: { post },
-    }
-  })
+    };
+  });
 }
 
-const { post } = Astro.props
+const { post } = Astro.props;
 ---
 
 <DefaultLayout title={post.title} description={post.body} url={post.title}>
@@ -28,13 +29,16 @@ const { post } = Astro.props
   </div>
   <section class="my-12">
     <div class="container">
-      <h1>{post.title}</h1><br />
-      <p>By userId: {post.userId}</p>
+      <h1>{post.title}</h1>
+      <p>Published on: {post.date}</p>
     </div>
   </section>
   <section class="my-12">
     <div class="container">
       <p class="text-2xl">{post.body}</p>
+      <div dangerouslySetInnerHTML={{ __html: post.podcastEmbed }}></div>
+      <h2>Transcript</h2>
+      <p>{post.transcript}</p>
     </div>
   </section>
 </DefaultLayout>
