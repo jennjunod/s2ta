@@ -5,9 +5,12 @@ What better way than my readme 😏
 
 Figure out formatting
 
-- [ ] figure out formatting
+- [x ] figure out formatting
 - [ ] import all data
 - [ ] update homepage
+
+### Done 10/14/24
+![alt text](image-1.png)
 
 
 ### Done 10/13/24

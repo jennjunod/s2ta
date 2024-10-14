@@ -8,16 +8,23 @@ export async function getStaticPaths() {
 
   return posts.map((post) => {
     return {
-      params: { post: post.title.replaceAll(' ', '-').toLowerCase() },
+      params: { post: post.id.toLowerCase() }, // Use `id` for the URL path
       props: { post },
     };
   });
 }
 
 const { post } = Astro.props;
+
+// Format the date consistently (e.g., "April 25, 2024")
+const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
 ---
 
-<DefaultLayout title={post.title} description={post.body} url={post.title}>
+<DefaultLayout title={post.title} description={post.description} url={post.id}>
   <div class="container">
     <div class="mt-12">
       <Breadcrumbs>
@@ -27,35 +34,79 @@ const { post } = Astro.props;
       </Breadcrumbs>
     </div>
   </div>
+
   <section class="my-12">
-    <div class="container">
+    <div class="container prose-slate w-sm md:w-prose md:prose poppins">
       <h1>{post.title}</h1>
-      <p>Published on: {post.date}</p>
-    </div>
-  </section>
-  <section class="my-12">
-    <div class="container">
-      <p class="text-2xl">{post.body}</p>
-      <div dangerouslySetInnerHTML={{ __html: post.podcastEmbed }}></div>
+      <p class="text-slate text-sm md:text-base">
+        Published on {formattedDate} 
+      </p>
+    
+
+    
+
+      <!-- Render the embedded content safely using Astro's set:html directive -->
+      {post.podcastEmbed && (
+        <div class="embed-container" set:html={post.podcastEmbed}></div>
+      )}
+
+      <div class="text-2xl">{post.body}</div>
+
+        <!-- Display the quote -->
+        {post.quote && (
+          <blockquote class="quote text-xl italic text-center my-4">
+            “{post.quote}”
+          </blockquote>
+        )}
+
       <h2>Transcript</h2>
-      <p>{post.transcript}</p>
+      <!-- Split the transcript by newlines (escaped or regular) to format paragraphs -->
+      {post.transcript
+        .split(/(?:\\n\\n|\n\n)/g) // Handle both \\n\\n and \n\n for new paragraphs
+        .map((paragraph, index) => (
+          <p key={index} class={paragraph.startsWith("Jenn:") ? "jenn-speaker" : "venia-speaker"}>
+            {paragraph.trim()}
+          </p>
+        ))}
+
+      <a href="/blog" title="Back to Blog" class="text-blue-500 hover:underline">
+        &larr; Back to Blog
+      </a>
     </div>
   </section>
 </DefaultLayout>
 
 <style lang="scss">
-  ul {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 4rem;
+  .embed-container {
+    position: relative;
+    padding-bottom: 25%; /* 3:1 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #070707;
+    margin: 1em 0;
 
-    @media (min-width: 550px) {
-      grid-template-columns: repeat(2, 1fr);
-      grid-gap: 2rem;
-    }
-
-    @media (min-width: 950px) {
-      grid-template-columns: repeat(3, 1fr);
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .quote {
+    font-style: italic;
+    color: #777;
+    padding: 0.5em;
+    border-left: 4px solid #333;
+    margin: 1em 0;
+  }
+
+
 </style>
