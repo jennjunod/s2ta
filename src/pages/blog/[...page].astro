@@ -21,8 +21,8 @@ const { page } = Astro.props;
 ---
 
 <DefaultLayout
-  title="Blog"
-  description="Welcome to the blog where you can read about various topics."
+  title="Past Shit We've Talked About"
+  description="Be a fly on the wall during tough conversations to ease into learning more about ourselves and those around us"
 >
   <section class="my-12">
     <div class="space-content container">
@@ -84,12 +84,19 @@ const { page } = Astro.props;
     }
   }
 
+  .card-wrapper {
+    height: 400px; /* Adjust this value to control the card height */
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
   .card-image {
     width: 100%;
-    height: auto;
-    max-height: 200px;
+    height: 200px; /* Set this to the height you need for a square or specific dimension */
     object-fit: cover;
-    display: block;
-    border-radius: 4px 4px 0 0; /* Optional: round the top corners */
+    border-radius: 8px; /* Optional */
   }
 </style>
+
+
